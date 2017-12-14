@@ -5,6 +5,7 @@
     div
       p(v-if="isPlugged") yes
       p(v-else) no
+    p count {{ count }}
 </template>
 
 <script>
@@ -14,7 +15,8 @@ export default {
   data () {
     return {
       level: null,
-      isPlugged: false
+      isPlugged: false,
+      count: 0
     }
   },
   components: {
@@ -25,14 +27,34 @@ export default {
   },
   methods: {
     onDeviceReady () {
-      console.log('ready')
+      cordova.plugins.backgroundMode.enable()
+      cordova.plugins.backgroundMode.on('activate', () => {
+        console.log('activate')
+      })
+      cordova.plugins.backgroundMode.on('enable', () => {
+        console.log('enable')
+        setInterval(this.loop, 1000)
+      })
+      cordova.plugins.backgroundMode.on('disable', () => {
+        console.log('disable')
+      })
+      cordova.plugins.backgroundMode.on('deactivate', () => {
+        console.log('deactivate')
+      })
+      cordova.plugins.backgroundMode.on('failure', () => {
+        console.log('failure')
+      })
       window.addEventListener('batterystatus', this.onBatteryStatus, false)
     },
     onBatteryStatus (status) {
       console.log('battery')
-      console.log(status)
       this.level = status.level
       this.isPlugged = status.isPlugged
+    },
+    loop () {
+      this.count++
+      if (this.count === 100) cordova.plugins.backgroundMode.moveToForeground()
+      if (this.count === 150) cordova.plugins.backgroundMode.moveToBackground()
     }
   }
 }
