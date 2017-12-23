@@ -1,7 +1,7 @@
 <template lang="pug">
   div#app
     div.normal(v-if="!isPlugged")
-      div(v-if="level >= 50")
+      div(v-if="level >= threshold")
         chara(:pattern="4")
       div(v-else)
         chara(:pattern="1")
@@ -27,6 +27,7 @@ export default {
   },
   data () {
     return {
+      threshold: 50,
       isAnimation: true,
       level: null,
       isPlugged: false
@@ -47,6 +48,10 @@ export default {
       this.level = status.level
       if (!this.isPlugged && status.isPlugged) {
         this.isAnimation = true
+        setTimeout(() => {
+          navigator.vibrate([100, 100, 200, 100, 1000])
+          this.isAnimation = false
+        }, 3000)
       }
       this.isPlugged = status.isPlugged
     }
@@ -102,7 +107,7 @@ html, body
             width 100%
             height 20px
             list-style none
-            background #00f
+            background #192a07
             &:nth-child(even)
-              background #ff0
+              background #000
 </style>

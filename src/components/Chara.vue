@@ -3,7 +3,7 @@
     div.chara
       img(:src="imgsrc")
     div.message
-      p(:class="cls") {{ message }}
+      p(:class="cls" :style="style") {{ message }}
 </template>
 
 <script>
@@ -11,7 +11,7 @@ export default {
   props: {
     prefix: {
       type: String,
-      default: 'test'
+      default: 'droid'
     },
     pattern: {
       type: Number,
@@ -21,7 +21,7 @@ export default {
   data () {
     return {
       master: {
-        test: {
+        droid: {
           pattern1: {
             message: 'じゅうでんしてね',
             cls: 'blink'
@@ -30,7 +30,10 @@ export default {
             message: 'じゅうでんちゅう'
           },
           pattern3: {
-            message: 'げんきになるよ'
+            message: 'げんきになるよ',
+            style: {
+              color: '#c2f290'
+            }
           },
           pattern4: {
             message: 'げんきです'
@@ -40,16 +43,21 @@ export default {
     }
   },
   computed: {
-    cls () {
+    pt () {
       let pattern = 'pattern' + this.pattern
-      return this.master[this.prefix][pattern].cls
+      return this.master[this.prefix][pattern]
+    },
+    cls () {
+      return this.pt.cls
+    },
+    style () {
+      return this.pt.style
     },
     message () {
-      let pattern = 'pattern' + this.pattern
-      return this.master[this.prefix][pattern].message
+      return this.pt.message
     },
     imgsrc () {
-      return '/static/test.png'
+      return 'static/' + this.prefix + this.pattern + '.png'
     }
   }
 }
@@ -80,8 +88,10 @@ export default {
   .chara
     width 100%
     height 80vh
+    display flex
+    align-items center
     img
-      height 100%
+      width 100%
   .message
     width 100%
     height 20vh
